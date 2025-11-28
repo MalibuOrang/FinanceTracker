@@ -1,22 +1,26 @@
 import os
 from pathlib import Path
-import dj_database_url
 
-# =========================
-# BASE
-# =========================
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# =========================
-# SECURITY
-# =========================
-SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-secret-for-dev')
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = ["*"]
 
-# =========================
-# APPLICATIONS
-# =========================
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-secret-for-dev')
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
+ALLOWED_HOSTS = [
+    'financetracker-xgd0.onrender.com'
+]
+
+
+# Application definition
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -26,7 +30,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
-
+    
     # external apps
     "django_extensions",
     "debug_toolbar",
@@ -38,16 +42,13 @@ INSTALLED_APPS = [
     'django_htmx',
     'template_partials',
     'import_export',
-
+    
     # project apps
     "tracker",
+    
+    
 ]
-
 SITE_ID = 1
-
-# =========================
-# MIDDLEWARE
-# =========================
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -62,9 +63,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "finance_project.urls"
 
-# =========================
-# TEMPLATES
-# =========================
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -83,73 +81,75 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "finance_project.wsgi.application"
 
-# =========================
-# DATABASE
-# =========================
+
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
 
-# =========================
-# PASSWORD VALIDATION
-# =========================
+# Password validation
+# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
+
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
-# =========================
-# INTERNATIONALIZATION
-# =========================
+
+# Internationalization
+# https://docs.djangoproject.com/en/4.2/topics/i18n/
+
 LANGUAGE_CODE = "en-us"
+
 TIME_ZONE = "UTC"
+
 USE_I18N = True
+
 USE_TZ = True
 
-# =========================
-# STATIC FILES
-# =========================
+IMPORT_EXPORT_USE_TRANSACTIONS = True
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
+
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# =========================
-# MEDIA FILES
-# =========================
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+# Default primary key field type
+# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-# =========================
-# DJANGO IMPORT EXPORT
-# =========================
-IMPORT_EXPORT_USE_TRANSACTIONS = True
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# =========================
-# AUTH SETTINGS
-# =========================
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
 AUTH_USER_MODEL = 'tracker.User'
 LOGIN_REDIRECT_URL = 'index'
 
-# =========================
-# DEBUG TOOLBAR (DEV ONLY)
-# =========================
-INTERNAL_IPS = ["127.0.0.1"]
-
-# =========================
-# SECURITY (PROD)
-# =========================
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
-# =========================
-# PAGINATION
-# =========================
 PAGE_SIZE = 5
