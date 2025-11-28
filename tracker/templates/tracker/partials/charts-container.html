@@ -1,0 +1,71 @@
+{% load widget_tweaks %}
+<div class="md:grid md:grid-cols-4 md:gap-6 flex flex-col-reverse" id="charts-container">
+    <!-- ГРАФИКИ -->
+    <div class="col-span-3 space-y-5">
+        <!-- ОСНОВНОЙ СТОЛБЧАТЫЙ ГРАФИК -->
+       <div class="bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-xl h-[420px] overflow-hidden">
+			{{ income_expense_barchart|safe }}
+	   </div>
+        <!-- СЕТКА КРУГОВЫХ ДИАГРАММ -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+		    <div class="bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-xl h-[380px] overflow-hidden">
+                {{ category_income_piechart|safe }}
+		    </div>
+		    <div class="bg-gray-900 border border-gray-800 rounded-2xl p-4 shadow-xl h-[380px] overflow-hidden">
+                {{ category_expense_piechart|safe }}
+		    </div>
+		</div>
+    </div>
+
+    <!-- ФИЛЬТРЫ -->
+    <div class="col-span-1">
+        <div class="bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-800">
+            <h2 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 019 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+                </svg>
+                Фильтры
+            </h2>
+
+            <form hx-get="{% url 'transaction-charts' %}" 
+                  hx-target="#charts-container" 
+                  hx-swap="outerHTML"
+                  hx-indicator="#spinner" 
+                  id="filterform" 
+                  class="space-y-4">
+
+                <div class="form-control">
+                    {{ filter.form.transaction_type|add_label_class:"label text-sm font-medium text-gray-300 mb-1" }}
+                    {% render_field filter.form.transaction_type class="w-full bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition appearance-none" %}
+                </div>
+
+                <div class="form-control">
+                    {{ filter.form.start_date|add_label_class:"label text-sm font-medium text-gray-300 mb-1" }}
+                    {% render_field filter.form.start_date class="w-full bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition" %}
+                </div>
+
+                <div class="form-control">
+                    {{ filter.form.end_date|add_label_class:"label text-sm font-medium text-gray-300 mb-1" }}
+                    {% render_field filter.form.end_date class="w-full bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition" %}
+                </div>
+
+                <div class="form-control">
+                    {% render_field filter.form.category class="text-white border-gray-300 rounded-lg focus:ring-green-500 px-3 py-2" %}
+                </div>
+
+                <button type="submit"
+                    class="w-full px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                    Применить
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- СПИННЕР ЗАГРУЗКИ -->
+<span id="spinner" class="htmx-indicator fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+           w-14 h-14 mt-2 border-4 border-emerald-400 border-t-transparent rounded-full animate-spin
+           drop-shadow-[0_0_10px_rgba(16,185,129,0.7)]">
+</span>

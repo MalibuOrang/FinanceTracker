@@ -1,0 +1,32 @@
+{% load widget_tweaks %}
+<div>
+    {{ form.type|add_label_class:"block text-sm font-medium text-gray-300 mb-1" }}
+    {% render_field form.type class="w-full bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-3 py-2" %}
+</div>
+
+<div>
+    {{ form.amount|add_label_class:"block text-sm font-medium text-gray-300 mb-1" }}
+    {% render_field form.amount class="w-full bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-3 py-2" %}
+
+    {% for error in form.amount.errors %}
+    <p class="text-red-400 mt-1">{{ error }}</p>
+    {% endfor %}
+</div>
+
+<div>
+    {{ form.description|add_label_class:"block text-sm font-medium text-gray-300 mb-1" }}
+    {% render_field form.description class="w-full bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-3 py-2" rows="3" %}
+
+    {% for error in form.description.errors %}
+    <p class="text-red-400 mt-1">{{ error }}</p>
+    {% endfor %}
+</div>
+
+<div>
+    {{ form.date|add_label_class:"block text-sm font-medium text-gray-300 mb-1" }}
+    {% render_field form.date class="w-full bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-3 py-2" %}
+</div>
+
+<div>
+    {% render_field form.category class="text-white border-gray-300 rounded-lg focus:ring-green-500 px-3 py-2" %}
+</div>

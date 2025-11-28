@@ -1,0 +1,196 @@
+{% load widget_tweaks %}
+{% load partials %}
+{% load humanize %}
+<div class="flex flex-col-reverse md:grid md:grid-cols-4 md:gap-6" id="transaction-container">
+    <div class="col-span-3">
+        <div class="bg-gray-900 rounded-2xl shadow-lg p-6 my-6 border border-gray-800 w-full">
+            <h1 class="text-3xl font-semibold text-white mb-6 flex items-center gap-3 text-left">
+                💰 Итоги
+            </h1>
+            <table class="w-full text-center text-white">
+                <thead class="uppercase text-sm text-gray-400 border-b border-gray-700">
+                    <tr>
+                        <th class="pb-2 text-center">Общий доход</th>
+                        <th class="pb-2 text-center">Общие расходы</th>
+                        <th class="pb-2 text-center">Чистый доход</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="text-lg font-medium">
+                        <td class="py-3 text-green-400">{{ total_income|floatformat:2|intcomma }} ₽</td>
+                        <td class="py-3 text-red-400">{{ total_expenses|floatformat:2|intcomma }} ₽</td>
+                        <td class="py-3 {% if net_income >= 0 %}text-emerald-400{% else %}text-rose-400{% endif %}">
+                            {{ net_income|floatformat:2|intcomma }} ₽
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-800 w-full">
+            <div class="flex justify-between items-center mt-4 mb-6">
+                <h1 class="text-3xl font-semibold text-white flex items-center gap-3 text-left">
+                    📜 Транзакции
+                </h1>
+                <div class="flex items-center gap-3">
+                    <button type="button"
+                        class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-sm transition"
+                        hx-get="{% url 'create-transaction' %}" hx-target="#transaction-block" hx-push-url="true"
+                        hx-indicator="#spinner" title="Добавить транзакцию" aria-label="Добавить транзакцию">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9" />
+                            <circle cx="12" cy="12" r="9" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <button type="button"
+                        class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-sm transition"
+                        hx-get="{% url 'export' %}" hx-include="#filterform" hx-target="#transaction-block"
+                        hx-push-url="true" hx-indicator="#spinner" title="Экспорт транзакций"
+                        aria-label="Экспорт транзакций">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                        </svg>
+                    </button>
+                    <button type="button"
+                        class="inline-flex items-center gap-2 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-sm transition"
+                        hx-get="{% url 'import' %}" hx-push-url="true" hx-include="#filterform"
+                        hx-target="#transaction-block" hx-indicator="#spinner" title="Импорт транзакций"
+                        aria-label="Импорт транзакций">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            {% if transactions %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm text-gray-300 border-separate border-spacing-y-2">
+                    <thead class="uppercase text-gray-400">
+                        <tr>
+                            <th class="px-6 py-3 text-left">Дата</th>
+                            <th class="px-6 py-3 text-left">Категория</th>
+                            <th class="px-6 py-3 text-left">Тип</th>
+                            <th class="px-6 py-3 text-left">Описание</th>
+                            <th class="px-6 py-3 text-left">Сумма</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% partialdef transaction_list inline=True %}
+                        {% for transaction in transactions %}
+                        {% if forloop.last and transactions.has_next %}
+                        <tr hx-get="{% url 'get-transactions' %}?page={{ transactions.next_page_number }}"
+                            hx-trigger="revealed" hx-swap="afterend" hx-target="this" hx-include="#filterform"
+                            hx-indicator="#spinner" class="bg-gray-800 hover:bg-gray-700 transition-all rounded-xl">
+                            {% else %}
+                        <tr class="bg-gray-800 hover:bg-gray-700 transition-all rounded-xl">
+                            {% endif %}
+                            <td class="px-6 py-3 font-medium text-left">{{ transaction.date|date:"d.m.Y" }}</td>
+                            <td class="px-6 py-3 text-left">{{ transaction.category }}</td>
+                            <td class="px-6 py-3 text-left">
+                                {% if transaction.type == "income" %}
+                                <span class="text-green-400 font-semibold">Доход</span>
+                                {% else %}
+                                <span class="text-red-400 font-semibold">Расход</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-3 text-gray-200 text-left">
+                                <div x-data="{ open: false }">
+                                    <p x-show="!open" @click="open = true" class="cursor-pointer">
+                                        {{ transaction.description|truncatechars:3 }}
+                                        <span class="text-green-400 underline ml-1">Показать</span>
+                                    </p>
+                                    <p x-show="open" @click="open = false" class="cursor-pointer">
+                                        {{ transaction.description }}
+                                        <span class="text-green-400 underline ml-1">Скрыть</span>
+                                    </p>
+                                </div>
+                            </td>
+                            <td class="px-6 py-3 font-semibold text-left">
+                                {% if transaction.type == "income" %}
+                                +{{ transaction.amount }}₽
+                                {% else %}
+                                -{{ transaction.amount }}₽
+                                {% endif %}
+                            </td>
+                            <td class="flex items-center px-6 py-5 space-x-2">
+                                <a hx-get="{% url 'update-transaction' transaction.pk %}" hx-push-url="true"
+                                    hx-target="#transaction-block"
+                                    class="cursor-pointer hover:text-emerald-400 transition" title="Редактировать">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
+                                    </svg>
+                                </a>
+                                <a hx-delete="{% url 'delete-transaction' transaction.pk %}" hx-push-url="true"
+                                    hx-target="#transaction-block"
+                                    hx-confirm="Вы уверены, что хотите удалить эту транзакцию?"
+                                    class="cursor-pointer hover:text-red-500 transition" title="Удалить">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endpartialdef %}
+                    </tbody>
+
+                </table>
+            </div>
+            {% else %}
+            <p class="text-xl text-gray-400 text-center py-6">
+                Транзакции не найдены 😔
+            </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-span-1 mt-6">
+        <div class="bg-gray-900 rounded-2xl shadow-lg p-6 border border-gray-800">
+            <h2 class="text-xl font-semibold text-white mb-4 flex items-center gap-2 text-left">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 019 21v-7.586L3.293 6.707A1 1 0 013 6V4z" />
+                </svg>
+                Фильтры
+            </h2>
+            <form hx-get="{% url 'transaction-list' %}" hx-target="#transaction-container" hx-swap="outerHTML"
+                id="filterform" class="space-y-4">
+                <div class="form-control">
+                    {{ filter.form.transaction_type|add_label_class:"label text-sm font-medium text-gray-300 mb-1" }}
+                    {% render_field filter.form.transaction_type class="w-full bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition appearance-none" %}
+                </div>
+                <div class="form-control">
+                    {{ filter.form.start_date|add_label_class:"label text-sm font-medium text-gray-300 mb-1" }}
+                    {% render_field filter.form.start_date class="w-full bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition" %}
+                </div>
+                <div class="form-control">
+                    {{ filter.form.end_date|add_label_class:"label text-sm font-medium text-gray-300 mb-1" }}
+                    {% render_field filter.form.end_date class="w-full bg-gray-800 text-gray-200 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition" %}
+                </div>
+                <div class="form-control">
+                    {% render_field filter.form.category class="text-white border-gray-300 rounded-lg focus:ring-green-500 px-3 py-2" %}
+                </div>
+                <button type="submit"
+                    class="w-full px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                    Применить
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<span id="spinner" class="htmx-indicator fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+           w-14 h-14 border-4 border-emerald-400 border-t-transparent rounded-full animate-spin
+           drop-shadow-[0_0_10px_rgba(16,185,129,0.7)]">
+</span>

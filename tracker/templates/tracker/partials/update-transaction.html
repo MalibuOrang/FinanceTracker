@@ -1,0 +1,25 @@
+{% load widget_tweaks %}
+<div class="bg-gray-900 border border-gray-800 rounded-2xl shadow-xl p-6 max-w-md mx-auto">
+    <h1 class="text-2xl font-semibold text-white mb-6 text-center">
+        Изменение Транзакции
+    </h1>
+
+    <form hx-post="{% url 'update-transaction' transaction.pk %}" class="space-y-4">
+
+        {% include 'tracker/partials/transaction-form.html' %}
+
+        <div class="flex justify-center pt-4 gap-2">
+            <button type="submit"
+                class="w-full px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md">
+                Сохранить
+            </button>
+
+            <button type="button" hx-get="{% url 'transaction-list' %}" hx-target="#transaction-block"
+                hx-push-url="/transactions"
+                class="w-full px-5 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl shadow-md">
+                Отмена
+            </button>
+        </div>
+
+    </form>
+</div>
