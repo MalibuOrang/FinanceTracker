@@ -142,7 +142,7 @@ INTERNAL_IPS = ["127.0.0.1"]
 # ========================
 AUTH_USER_MODEL = "tracker.User"
 LOGIN_REDIRECT_URL = "index"
-PAGE_SIZE = 5
+PAGE_SIZE = 10
 
 # ========================
 # Email (для allauth)
