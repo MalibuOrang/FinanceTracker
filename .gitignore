@@ -16,9 +16,6 @@ env/
 *.pyd
 *.sqlite3
 db.sqlite3
-media/
-staticfiles/
-static/
 
 # Pytest cache
 .pytest_cache/

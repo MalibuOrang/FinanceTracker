@@ -12,9 +12,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ========================
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "fallback-secret-key")
 DEBUG = os.environ.get("DJANGO_DEBUG", "False") == "True"
-ALLOWED_HOSTS = os.environ.get(
-    "DJANGO_ALLOWED_HOSTS", "financetracker-xgd0.onrender.com"
-).split(",")
+ALLOWED_HOSTS = ["financetracker-xgd0.onrender.com"]
+
 # ========================
 # Installed Apps
 # ========================
@@ -126,6 +125,7 @@ USE_TZ = True
 # Static files
 # ========================
 STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # ========================
