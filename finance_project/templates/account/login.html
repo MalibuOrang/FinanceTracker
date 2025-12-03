@@ -39,10 +39,17 @@
     {% render_field form.login class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
   </div>
 
-  <div class="mb-4">
+  <div class="mb-4 relative">
     {{ form.password|add_label_class:"text-white mb-2" }}
-    {% render_field form.password class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
-  </div>
+    <div class="relative">
+        {% render_field form.password class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pr-10 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="password" %}
+        <button type="button" onclick="togglePassword('password')" 
+                class="absolute inset-y-0 right-3 flex items-center text-gray-400">
+            👁️
+        </button>
+    </div>
+</div>
+
 
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
